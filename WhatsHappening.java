@@ -1,3 +1,4 @@
+
 /*
   This code helps us to understand what is happening when a user starts
   to move pieces around the board. We are using the standard output to show
