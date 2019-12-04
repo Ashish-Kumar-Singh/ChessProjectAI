@@ -70,12 +70,12 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
         }
 
         // Setting up the Initial Chess board.
-/*
+
   	for(int i=8;i < 16; i++){
        		pieces = new JLabel( new ImageIcon("WhitePawn.png") );
 			panels = (JPanel)chessBoard.getComponent(i);
 	        panels.add(pieces);
-		}*/
+		}
 		pieces = new JLabel( new ImageIcon("WhiteRook.png") );
 		panels = (JPanel)chessBoard.getComponent(0);
 	    panels.add(pieces);
@@ -143,11 +143,130 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
   bottom of the board it turns into a Queen (this should be handled where the move is actually being made and not in this
   method).
 */
+private Boolean checkpawns(Square s){
+  Boolean possible = false;
+  int x = s.getXC()*75;
+  int y = s.getYC()*75;
+  if(!((getPieceName((x+75), y).contains("BlackPawn"))||(getPieceName((x-75), y).contains("BlackPawn"))||(getPieceName(x,(y+75)).contains("BlackPawn"))||(getPieceName((x), (y-75)).contains("BlackPawn"))||(getPieceName((x+75),(y+75)).contains("BlackPawn"))||(getPieceName((x-75),(y+75)).contains("BlackPawn"))||(getPieceName((x+75),(y-75)).contains("BlackPawn"))||(getPieceName((x-75), (y-75)).contains("BlackPawn")))){
+      possible = true;
+  }
+  return possible;
+}
+
 private Stack getWhitePawnSquares(int x, int y, String piece){
   Stack moves = new Stack();
+  Square startingSquare = new Square(x, y, piece);
+  Move validM, validM2, validM3, validM4;
+  int tmpx1 = x;
+  int tmpy1 = y+1;
+  int tmpy2 = y+2;
 
-// To be completed...
+/*
+  If we consider the grid above, we can create three different columes to check.
+    - if x increases by one square, using the variable tmpx1 (x+1)
+    - if x decreases by one square, using the variable tmpx2 (x-1)
+    - or if x stays the same.
+*/
+  if(!((tmpx1 > 7)&&(tmpx1<0))){
+    /*
+      This is the first condition where we will be working with the column where x increases.
+      If we consider x increasing, we need to make sure that we don't fall off the board, so we use
+      a condition here to check that the new value of x (tmpx1) is not greater than 7.
 
+      From the grid above we can see in this column that there are three possible squares for us to check in
+      this column:
+      - were y decreases, y-1
+      - were y increases, y+1
+      - or were y stays the same
+
+      The first step is to construct three new Squares for each of these possibilities.
+      As the unchanged y value is already a location on the board we don't need to check the location and can simply
+      make a call to checkSurroundingSquares for this new Square.
+
+      If checkSurroundingSquares returns a positive value we jump inside the condition below:
+        - firstly we create a new Move, which takes the starting square and the landing square that we have just checked with
+          checkSurroundingSquares.
+        - Next we need to figure out if there is a piece present on the square and if so make sure
+          that the piece is an opponents piece.
+        - Once we make sure that we are either moving to an empty square or we are taking our opponents piece we can push this
+          possible move onto our stack of possible moves called "moves".
+
+      This process is followed again for the other temporary squares created.
+
+      After we check for all possoble squares on this column, we repeat the process for the other columns as identified above
+      in the grid.
+    */
+    Square tmp = new Square(tmpx1, y, piece);
+    Square tmp1 = new Square(tmpx1, tmpy1, piece);
+    Square tmp2 = new Square(tmpx1, tmpy2, piece);
+    if(checkSurroundingSquares(tmp)){
+      validM = new Move(startingSquare, tmp);
+      if(!piecePresent(((tmp.getXC()*75)+20), (((tmp.getYC()*75)+20)))){
+        moves.push(validM);
+      }
+      else{
+        if(checkWhiteOponent(((tmp.getXC()*75)+20), (((tmp.getYC()*75)+20)))){
+          moves.push(validM);
+        }
+      }
+    }
+    if(!(tmpy1 > 7)){
+      if(checkSurroundingSquares(tmp1)){
+        validM2 = new Move(startingSquare, tmp1);
+        if(!piecePresent(((tmp1.getXC()*75)+20), (((tmp1.getYC()*75)+20)))){
+          moves.push(validM2);
+        }
+        else{
+          if(checkWhiteOponent(((tmp1.getXC()*75)+20), (((tmp1.getYC()*75)+20)))){
+            moves.push(validM2);
+          }
+        }
+      }
+    }
+    if(!(tmpy2 < 0)){
+      if(checkSurroundingSquares(tmp2)){
+        validM3 = new Move(startingSquare, tmp2);
+        if(!piecePresent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){
+          moves.push(validM3);
+        }
+        else{
+          System.out.println("The values that we are going to be looking at are : "+((tmp2.getXC()*75)+20)+" and the y value is : "+((tmp2.getYC()*75)+20));
+          if(checkWhiteOponent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){
+            moves.push(validM3);
+          }
+        }
+      }
+    }
+  }
+
+  Square tmp7 = new Square(x, tmpy1, piece);
+  Square tmp8 = new Square(x, tmpy2, piece);
+  if(!(tmpy1 > 7)){
+    if(checkSurroundingSquares(tmp7)){
+      validM2 = new Move(startingSquare, tmp7);
+      if(!piecePresent(((tmp7.getXC()*75)+20), (((tmp7.getYC()*75)+20)))){
+        moves.push(validM2);
+      }
+      else{
+        if(checkWhiteOponent(((tmp7.getXC()*75)+20), (((tmp7.getYC()*75)+20)))){
+          moves.push(validM2);
+        }
+      }
+    }
+  }
+  if(!(tmpy2 < 0)){
+    if(checkSurroundingSquares(tmp8)){
+      validM3 = new Move(startingSquare, tmp8);
+      if(!piecePresent(((tmp8.getXC()*75)+20), (((tmp8.getYC()*75)+20)))){
+        moves.push(validM3);
+      }
+      else{
+        if(checkWhiteOponent(((tmp8.getXC()*75)+20), (((tmp8.getYC()*75)+20)))){
+          moves.push(validM3);
+        }
+      }
+    }
+  }
   return moves;
 }
 
@@ -846,18 +965,19 @@ private void printStack(Stack input){
           We need to identify all the possible moves that can be made by the AI Opponent
       */
       if(tmpString.contains("Knight")){
-    //    tmpMoves = getKnightMoves(s.getXC(), s.getYC(), s.getName());
+     tmpMoves = getKnightMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Bishop")){
-    //    tmpMoves = getBishopMoves(s.getXC(), s.getYC(), s.getName());
+       tmpMoves = getBishopMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Pawn")){
+        tmpMoves = getWhitePawnSquares(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Rook")){
-      //  tmpMoves = getRookMoves(s.getXC(), s.getYC(), s.getName());
+        tmpMoves = getRookMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Queen")){
-      //  tmpMoves = getQueenMoves(s.getXC(), s.getYC(), s.getName());
+       tmpMoves = getQueenMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("King")){
         tmpMoves = getKingSquares(s.getXC(), s.getYC(), s.getName());
