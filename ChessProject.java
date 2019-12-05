@@ -191,15 +191,12 @@ private Stack getWhitePawnSquares(int x, int y, String piece){
     }
 }
 
-if(!((tmpx1 > 7))){
+if(!((tmpx1 > 7))){//Diagonal t0 the left
   Square tmp2 = new Square(tmpx1, tmpy1, piece);
   
   if(!(tmpy1 > 7)){
-      validM3 = new Move(startingSquare, tmp1);
-      if(!piecePresent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){
-        moves.push(validM3);
-      }
-      else{
+      validM3 = new Move(startingSquare, tmp2);
+      if(piecePresent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){
         if(checkWhiteOponent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){
           moves.push(validM3);
         }
@@ -207,15 +204,12 @@ if(!((tmpx1 > 7))){
   }
 }
 
-if(!((tmpx2 < 0))){
+if(!((tmpx2 < 0))){//Diagonal to the right
   Square tmp3 = new Square(tmpx2, tmpy1, piece);
 
   if(!(tmpy1 > 7)){
       validM4 = new Move(startingSquare, tmp3);
-      if(!piecePresent(((tmp3.getXC()*75)+20), (((tmp3.getYC()*75)+20)))){
-        moves.push(validM4);
-      }
-      else{
+      if(piecePresent(((tmp3.getXC()*75)+20), (((tmp3.getYC()*75)+20)))){
         if(checkWhiteOponent(((tmp3.getXC()*75)+20), (((tmp3.getYC()*75)+20)))){
           moves.push(validM4);
         }
