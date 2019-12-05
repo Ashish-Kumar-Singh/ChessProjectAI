@@ -70,7 +70,7 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
         }
 
         // Setting up the Initial Chess board.
-
+        //Adding pieces on the board
   	for(int i=8;i < 16; i++){
        		pieces = new JLabel( new ImageIcon("WhitePawn.png") );
 			panels = (JPanel)chessBoard.getComponent(i);
@@ -136,15 +136,8 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
       temporary = new Stack();
     }
 
-/*
-  Method to check were a Black Pawn can move to. There are two main conditions here. Either the Black Pawn is in
-  its starting position in which case it can move either one or two squares or it has already moved and the it can only
-  one square down the board. The Pawn can also take an opponent piece in a diagonal movement. and if it makes it to the
-  bottom of the board it turns into a Queen (this should be handled where the move is actually being made and not in this
-  method).
-*/
 
-private Stack getWhitePawnSquares(int x, int y, String piece){
+private Stack getWhitePawnSquares(int x, int y, String piece){//gets all the squares a white pawn can make a move to
   Stack moves = new Stack();
   Square startingSquare = new Square(x, y, piece);
   Move validM, validM2, validM3, validM4;
@@ -155,8 +148,8 @@ private Stack getWhitePawnSquares(int x, int y, String piece){
   int tmpy2 = y+2;
 
     //We create the two basic possible moves the pawn can make
-    Square tmp = new Square(x, tmpy1, piece);
-    Square tmp1 = new Square(x, tmpy2, piece);
+    Square tmp = new Square(x, tmpy1, piece);//1 step forward
+    Square tmp1 = new Square(x, tmpy2, piece);//2 Steps forward
 
     
 
@@ -825,6 +818,32 @@ private void getLandingSquares(Stack found){
     return squares;
   }
 
+  //Method to find all black pieces similar to white
+  private Stack findBlackPieces(){
+    Stack squares = new Stack();
+    String icon;
+    int x;
+    int y;
+    String pieceName;
+    for(int i=0;i < 600;i+=75){
+      for(int j=0;j < 600;j+=75){
+        y = i/75;
+        x=j/75;
+        Component tmp = chessBoard.findComponentAt(j, i);
+        if(tmp instanceof JLabel){
+          chessPiece = (JLabel)tmp;
+          icon = chessPiece.getIcon().toString();
+          pieceName = icon.substring(0, (icon.length()-4));
+          if(pieceName.contains("Black")){
+            Square stmp = new Square(x, y, pieceName);
+            squares.push(stmp);
+          }
+        }
+      }
+    }
+    return squares;
+  }
+
 	/*
 		This method checks if there is a piece present on a particular square.
 	*/
@@ -875,6 +894,143 @@ private void printStack(Stack input){
     l = (Square)m.getLanding();
     System.out.println("The possible move that was found is : ("+s.getXC()+" , "+s.getYC()+"), landing at ("+l.getXC()+" , "+l.getYC()+")");
   }
+}
+
+//Pawn - 1 point
+//Knight - 3 points
+//Bishop - 3 points
+//Rook - 5 points
+//Queen - 9 points
+
+
+private void bestMove(){
+  /*
+  When the AI Agent decides on a move, a red border shows the square from where the move started and the
+  landing square of the move.
+*/
+resetBorders();
+layeredPane.validate();
+layeredPane.repaint();
+Stack white = findWhitePieces();
+Stack bstack = findBlackPieces();//stack of all black pieces
+Stack completeMoves = new Stack();
+Move tmp;
+while(!white.empty()){
+  Square s = (Square)white.pop();
+  String tmpString = s.getName();
+  Stack tmpMoves = new Stack();
+  Stack temporary = new Stack();
+  /*
+      We need to identify all the possible moves that can be made by the AI Opponent
+  */
+  if(tmpString.contains("Knight")){
+   tmpMoves = getKnightMoves(s.getXC(), s.getYC(), s.getName());
+  }
+  else if(tmpString.contains("Bishop")){
+   tmpMoves = getBishopMoves(s.getXC(), s.getYC(), s.getName());
+  }
+  else if(tmpString.contains("Pawn")){
+   tmpMoves = getWhitePawnSquares(s.getXC(), s.getYC(), s.getName());
+  }
+  else if(tmpString.contains("Rook")){
+   tmpMoves = getRookMoves(s.getXC(), s.getYC(), s.getName());
+  }
+  else if(tmpString.contains("Queen")){
+   tmpMoves = getQueenMoves(s.getXC(), s.getYC(), s.getName());
+  }
+  else if(tmpString.contains("King")){
+   tmpMoves = getKingSquares(s.getXC(), s.getYC(), s.getName());
+  }
+
+  while(!tmpMoves.empty()){
+    tmp = (Move)tmpMoves.pop();
+    completeMoves.push(tmp);
+  }
+}
+temporary = (Stack)completeMoves.clone();
+getLandingSquares(temporary);
+printStack(temporary);
+/*
+  So now we should have a copy of all the possible moves to make in our Stack called completeMoves
+*/
+if(completeMoves.size() == 0){
+  /*
+        In Chess if you cannot make a valid move but you are not in Check this state is referred to
+        as a Stale Mate
+  */
+    JOptionPane.showMessageDialog(null, "Cogratulations, you have placed the AI component in a Stale Mate Position");
+    System.exit(0);
+}
+else{
+  /*
+    Okay, so we can make a move now. We have a stack of all possible moves and need to call the correct agent to select
+    one of these moves. Lets print out the possible moves to the standard output to view what the options are for
+    White. Later when you are finished the continuous assessment you don't need to have such information being printed
+    out to the standard output.
+  */
+    System.out.println("=============================================================");
+    Stack testing = new Stack();
+    while(!completeMoves.empty()){
+      Move tmpMove = (Move)completeMoves.pop();
+      Square s1 = (Square)tmpMove.getStart();
+      Square s2 = (Square)tmpMove.getLanding();
+      System.out.println("The "+s1.getName()+" can move from ("+s1.getXC()+", "+s1.getYC()+") to the following square: ("+s2.getXC()+", "+s2.getYC()+")");
+      testing.push(tmpMove);
+    }
+     System.out.println("=============================================================");
+     Border redBorder = BorderFactory.createLineBorder(Color.RED, 3);
+     Move selectedMove = agent.nextBestMove(testing);
+     Square startingPoint = (Square)selectedMove.getStart();
+     Square landingPoint = (Square)selectedMove.getLanding();
+     int startX1 = (startingPoint.getXC()*75)+20;
+     int startY1 = (startingPoint.getYC()*75)+20;
+     int landingX1 = (landingPoint.getXC()*75)+20;
+     int landingY1 = (landingPoint.getYC()*75)+20;
+     System.out.println("-------- Move "+startingPoint.getName()+" ("+startingPoint.getXC()+", "+startingPoint.getYC()+") to ("+landingPoint.getXC()+", "+landingPoint.getYC()+")");
+
+     Component c  = (JLabel)chessBoard.findComponentAt(startX1, startY1);
+     Container parent = c.getParent();
+     parent.remove(c);
+     int panelID = (startingPoint.getYC() * 8)+startingPoint.getXC();
+     panels = (JPanel)chessBoard.getComponent(panelID);
+     panels.setBorder(redBorder);
+     parent.validate();
+
+     Component l = chessBoard.findComponentAt(landingX1, landingY1);
+     if(l instanceof JLabel){
+        Container parentlanding = l.getParent();
+        JLabel awaitingName = (JLabel)l;
+        String agentCaptured = awaitingName.getIcon().toString();
+        if(agentCaptured.contains("King")){
+          agentwins = true;
+        }
+        parentlanding.remove(l);
+        parentlanding.validate();
+        pieces = new JLabel( new ImageIcon(startingPoint.getName()+".png") );
+        int landingPanelID = (landingPoint.getYC()*8)+landingPoint.getXC();
+        panels = (JPanel)chessBoard.getComponent(landingPanelID);
+        panels.add(pieces);
+        panels.setBorder(redBorder);
+        layeredPane.validate();
+        layeredPane.repaint();
+
+        if(agentwins){
+          JOptionPane.showMessageDialog(null, "The AI Agent has won!");
+          System.exit(0);
+        }
+      }
+      else{
+        pieces = new JLabel( new ImageIcon(startingPoint.getName()+".png") );
+        int landingPanelID = (landingPoint.getYC()*8)+landingPoint.getXC();
+        panels = (JPanel)chessBoard.getComponent(landingPanelID);
+        panels.add(pieces);
+        panels.setBorder(redBorder);
+        layeredPane.validate();
+        layeredPane.repaint();
+      }
+      white2Move = false;
+}
+
 }
 
   private void makeAIMove(){
