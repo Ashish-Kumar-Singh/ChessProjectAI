@@ -143,26 +143,18 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
   bottom of the board it turns into a Queen (this should be handled where the move is actually being made and not in this
   method).
 */
-private Boolean checkpawns(Square s){
-  Boolean possible = false;
-  int x = s.getXC()*75;
-  int y = s.getYC()*75;
-  if(!((getPieceName((x+75), y).contains("BlackPawn"))||(getPieceName((x-75), y).contains("BlackPawn"))||(getPieceName(x,(y+75)).contains("BlackPawn"))||(getPieceName((x), (y-75)).contains("BlackPawn"))||(getPieceName((x+75),(y+75)).contains("BlackPawn"))||(getPieceName((x-75),(y+75)).contains("BlackPawn"))||(getPieceName((x+75),(y-75)).contains("BlackPawn"))||(getPieceName((x-75), (y-75)).contains("BlackPawn")))){
-      possible = true;
-  }
-  return possible;
-}
 
 private Stack getWhitePawnSquares(int x, int y, String piece){
   Stack moves = new Stack();
   Square startingSquare = new Square(x, y, piece);
   Move validM, validM2, validM3, validM4;
+  //possibe moves a pawn can make are two step front 1 step front and diagonal two ways 
   int tmpx1 = x+1;
   int tmpx2 = x-1;
   int tmpy1 = y+1;
   int tmpy2 = y+2;
 
-    //We create four possible moves the pawn can make
+    //We create the two basic possible moves the pawn can make
     Square tmp = new Square(x, tmpy1, piece);
     Square tmp1 = new Square(x, tmpy2, piece);
 
@@ -181,13 +173,13 @@ private Stack getWhitePawnSquares(int x, int y, String piece){
     }
 }
 
-if(!((tmpx1 > 7))){//Diagonal t0 the left
+if(!((tmpx1 > 7))){//Diagonal to the left
   Square tmp2 = new Square(tmpx1, tmpy1, piece);
   
   if(!(tmpy1 > 7)){
       validM3 = new Move(startingSquare, tmp2);
-      if(piecePresent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){
-        if(checkWhiteOponent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){
+      if(piecePresent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){//Checks if theres a piece present
+        if(checkWhiteOponent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){//Checks if the piece is white?
           moves.push(validM3);
         }
       }
@@ -199,8 +191,8 @@ if(!((tmpx2 < 0))){//Diagonal to the right
 
   if(!(tmpy1 > 7)){
       validM4 = new Move(startingSquare, tmp3);
-      if(piecePresent(((tmp3.getXC()*75)+20), (((tmp3.getYC()*75)+20)))){
-        if(checkWhiteOponent(((tmp3.getXC()*75)+20), (((tmp3.getYC()*75)+20)))){
+      if(piecePresent(((tmp3.getXC()*75)+20), (((tmp3.getYC()*75)+20)))){//Checks if theres a piece present
+        if(checkWhiteOponent(((tmp3.getXC()*75)+20), (((tmp3.getYC()*75)+20)))){//Checks if the piece is white?
           moves.push(validM4);
         }
       }
