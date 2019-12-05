@@ -173,21 +173,11 @@ private Stack getWhitePawnSquares(int x, int y, String piece){
      if(!piecePresent(((tmp.getXC()*75)+20), (((tmp.getYC()*75)+20)))){
        moves.push(validM);
      }
-     else{
-       if(checkWhiteOponent(((tmp.getXC()*75)+20), (((tmp.getYC()*75)+20)))){
-         moves.push(validM);
-       }
-     }
   }
   if(!(tmpy2 > 7)  && (y==1)){//Move 2 step forward 
     validM2 = new Move(startingSquare, tmp1);
     if(!piecePresent(((tmp1.getXC()*75)+20), (((tmp1.getYC()*75)+20)))){
       moves.push(validM2);
-    }
-    else{
-      if(checkWhiteOponent(((tmp1.getXC()*75)+20), (((tmp1.getYC()*75)+20)))){
-        moves.push(validM2);
-      }
     }
 }
 
@@ -915,22 +905,22 @@ private void printStack(Stack input){
           We need to identify all the possible moves that can be made by the AI Opponent
       */
       if(tmpString.contains("Knight")){
-     //tmpMoves = getKnightMoves(s.getXC(), s.getYC(), s.getName());
+       tmpMoves = getKnightMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Bishop")){
-       //tmpMoves = getBishopMoves(s.getXC(), s.getYC(), s.getName());
+       tmpMoves = getBishopMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Pawn")){
-        tmpMoves = getWhitePawnSquares(s.getXC(), s.getYC(), s.getName());
+       tmpMoves = getWhitePawnSquares(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Rook")){
-        //tmpMoves = getRookMoves(s.getXC(), s.getYC(), s.getName());
+       tmpMoves = getRookMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Queen")){
-       //tmpMoves = getQueenMoves(s.getXC(), s.getYC(), s.getName());
+       tmpMoves = getQueenMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("King")){
-        //tmpMoves = getKingSquares(s.getXC(), s.getYC(), s.getName());
+       tmpMoves = getKingSquares(s.getXC(), s.getYC(), s.getName());
       }
 
       while(!tmpMoves.empty()){
