@@ -71,11 +71,11 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 
         // Setting up the Initial Chess board.
         //Adding pieces on the board
-  	/*for(int i=8;i < 16; i++){
+  	for(int i=8;i < 16; i++){
        		pieces = new JLabel( new ImageIcon("WhitePawn.png") );
 			panels = (JPanel)chessBoard.getComponent(i);
 	        panels.add(pieces);
-		}*/
+		}
 		pieces = new JLabel( new ImageIcon("WhiteRook.png") );
 		panels = (JPanel)chessBoard.getComponent(0);
 	    panels.add(pieces);
@@ -231,11 +231,14 @@ if(!((tmpx1 > 7))){//Diagonal to the left
   
   if(!(tmpy1 > 7)){
       validM3 = new Move(startingSquare, tmp2);
-      if(piecePresent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){//Checks if theres a piece present
-        if(checkBlackOponent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){//Checks if the piece is black?
-          moves.push(validM3);
-        }
+      if(!piecePresent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){//Checks if theres a piece present
+        moves.push(validM3);
       }
+      else {
+        if(checkBlackOponent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){//Checks if the piece is black?
+        moves.push(validM3);
+      }
+    }
   }
 }
 
@@ -244,7 +247,10 @@ if(!((tmpx2 < 0))){//Diagonal to the right
 
   if(!(tmpy1 > 7)){
       validM4 = new Move(startingSquare, tmp3);
-      if(piecePresent(((tmp3.getXC()*75)+20), (((tmp3.getYC()*75)+20)))){//Checks if theres a piece present
+      if(!piecePresent(((tmp3.getXC()*75)+20), (((tmp3.getYC()*75)+20)))){//Checks if theres a piece present
+        moves.push(validM4);
+      }
+      else{
         if(checkBlackOponent(((tmp3.getXC()*75)+20), (((tmp3.getYC()*75)+20)))){//Checks if the piece is black?
           moves.push(validM4);
         }
@@ -289,9 +295,14 @@ private Boolean checkSurroundingSquares(Square s){
 }
 
 private Boolean Checkifattacked(Move sq){
-  Boolean attack = false;
+  Boolean attack = true;
   Move AImove = sq;
-  Square lsquare = AImove.landing;//returns the landing square of the the move that the AI wants to make
+  Square lsquare = AImove.getLanding();//returns the landing square of the the move that the AI wants to make
+  Square ssquare = AImove.getStart();
+  int landx = lsquare.getXC();
+  int landy = lsquare.getYC();
+  int startx = ssquare.getXC();
+  int starty = ssquare.getYC();
   Stack bstack = findBlackPieces();//stack of all black pieces
 Stack blackMoves = new Stack();//Stack o f black moves
 Move bmove;//black move
@@ -320,17 +331,31 @@ while(!bstack.empty()){//Getting all the moves by the player
   else if(tmpString.contains("Queen")){
    tmpMoves = getQueenMoves(s.getXC(), s.getYC(), s.getName());
   }
+  
 
   while(!tmpMoves.empty()){
     bmove = (Move)tmpMoves.pop();
-    Square isking = bmove.getLanding();
     blackMoves.push(bmove);
   }
+
 
   temporary = (Stack)blackMoves.clone();
     bgetLandingSquares(temporary);
     printStack(temporary);
-  attack=true;
+  
+
+  while(!blackMoves.empty()){
+    Move newmove = (Move)blackMoves.pop();
+    Square isking = newmove.getLanding();
+    int x = isking.getXC();
+    int y = isking.getYC();
+    if(((x == landx) && (y == landy))|| ((x==startx) && (y==starty))){
+      attack=false;
+    }
+    else{
+      attack=true;
+    }
+   }
 
 }
 return attack;
@@ -415,15 +440,14 @@ private Stack getKingSquares(int x, int y, String piece){
     Square tmp2 = new Square(tmpx1, tmpy2, piece);
     if(checkSurroundingSquares(tmp)){
       validM = new Move(startingSquare, tmp);
+      if(Checkifattacked(validM)){//checks if the validmove can be attacked by any other moves that the player could make
       if(!piecePresent(((tmp.getXC()*75)+20), (((tmp.getYC()*75)+20)))){
-        if(Checkifattacked(validM)){//checks if the validmove can be attacked by any other moves that the player could make
           moves.push(validM);
-        }
-        
       }
+    }
       else{
+        if(Checkifattacked(validM)){//checks if the validmove can be attacked by any other moves that the player could make
         if(checkWhiteOponent(((tmp.getXC()*75)+20), (((tmp.getYC()*75)+20)))){
-          if(Checkifattacked(validM)){//checks if the validmove can be attacked by any other moves that the player could make
             moves.push(validM);
           }
         }
@@ -432,14 +456,14 @@ private Stack getKingSquares(int x, int y, String piece){
     if(!(tmpy1 > 7)){
       if(checkSurroundingSquares(tmp1)){
         validM2 = new Move(startingSquare, tmp1);
+        if(Checkifattacked(validM2)){//checks if the validmove can be attacked by any other moves that the player could make
         if(!piecePresent(((tmp1.getXC()*75)+20), (((tmp1.getYC()*75)+20)))){
-          if(Checkifattacked(validM2)){//checks if the validmove can be attacked by any other moves that the player could make
             moves.push(validM2);
           }
         }
         else{
+          if(Checkifattacked(validM2)){//checks if the validmove can be attacked by any other moves that the player could make
           if(checkWhiteOponent(((tmp1.getXC()*75)+20), (((tmp1.getYC()*75)+20)))){
-            if(Checkifattacked(validM2)){//checks if the validmove can be attacked by any other moves that the player could make
               moves.push(validM2);
             }
           }
@@ -449,15 +473,15 @@ private Stack getKingSquares(int x, int y, String piece){
     if(!(tmpy2 < 0)){
       if(checkSurroundingSquares(tmp2)){
         validM3 = new Move(startingSquare, tmp2);
+        if(Checkifattacked(validM3)){//checks if the validmove can be attacked by any other moves that the player could make
         if(!piecePresent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){
-          if(Checkifattacked(validM3)){//checks if the validmove can be attacked by any other moves that the player could make
             moves.push(validM3);
           }
         }
         else{
           System.out.println("The values that we are going to be looking at are : "+((tmp2.getXC()*75)+20)+" and the y value is : "+((tmp2.getYC()*75)+20));
+          if(Checkifattacked(validM3)){//checks if the validmove can be attacked by any other moves that the player could make
           if(checkWhiteOponent(((tmp2.getXC()*75)+20), (((tmp2.getYC()*75)+20)))){
-            if(Checkifattacked(validM3)){//checks if the validmove can be attacked by any other moves that the player could make
               moves.push(validM3);
             }
           }
@@ -471,14 +495,14 @@ private Stack getKingSquares(int x, int y, String piece){
     Square tmp5 = new Square(tmpx2, tmpy2, piece);
     if(checkSurroundingSquares(tmp3)){
       validM = new Move(startingSquare, tmp3);
+      if(Checkifattacked(validM)){//checks if the validmove can be attacked by any other moves that the player could make
       if(!piecePresent(((tmp3.getXC()*75)+20), (((tmp3.getYC()*75)+20)))){
-        if(Checkifattacked(validM)){//checks if the validmove can be attacked by any other moves that the player could make
           moves.push(validM);
         }
       }
       else{
+        if(Checkifattacked(validM)){//checks if the validmove can be attacked by any other moves that the player could make
         if(checkWhiteOponent(((tmp3.getXC()*75)+20), (((tmp3.getYC()*75)+20)))){
-          if(Checkifattacked(validM)){//checks if the validmove can be attacked by any other moves that the player could make
             moves.push(validM);
           }
         }
@@ -487,14 +511,14 @@ private Stack getKingSquares(int x, int y, String piece){
     if(!(tmpy1 > 7)){
       if(checkSurroundingSquares(tmp4)){
         validM2 = new Move(startingSquare, tmp4);
+        if(Checkifattacked(validM2)){//checks if the validmove can be attacked by any other moves that the player could make
         if(!piecePresent(((tmp4.getXC()*75)+20), (((tmp4.getYC()*75)+20)))){
-          if(Checkifattacked(validM2)){//checks if the validmove can be attacked by any other moves that the player could make
             moves.push(validM2);
           }
         }
         else{
+          if(Checkifattacked(validM2)){//checks if the validmove can be attacked by any other moves that the player could make
           if(checkWhiteOponent(((tmp4.getXC()*75)+20), (((tmp4.getYC()*75)+20)))){
-            if(Checkifattacked(validM2)){//checks if the validmove can be attacked by any other moves that the player could make
               moves.push(validM2);
             }
           }
@@ -504,14 +528,14 @@ private Stack getKingSquares(int x, int y, String piece){
     if(!(tmpy2 < 0)){
       if(checkSurroundingSquares(tmp5)){
         validM3 = new Move(startingSquare, tmp5);
+        if(Checkifattacked(validM3)){//checks if the validmove can be attacked by any other moves that the player could make
         if(!piecePresent(((tmp5.getXC()*75)+20), (((tmp5.getYC()*75)+20)))){
-          if(Checkifattacked(validM3)){//checks if the validmove can be attacked by any other moves that the player could make
             moves.push(validM3);
           }
         }
         else{
+          if(Checkifattacked(validM3)){//checks if the validmove can be attacked by any other moves that the player could make
           if(checkWhiteOponent(((tmp5.getXC()*75)+20), (((tmp5.getYC()*75)+20)))){
-            if(Checkifattacked(validM3)){//checks if the validmove can be attacked by any other moves that the player could make
               moves.push(validM3);
             }
           }
@@ -524,14 +548,14 @@ private Stack getKingSquares(int x, int y, String piece){
   if(!(tmpy1 > 7)){
     if(checkSurroundingSquares(tmp7)){
       validM2 = new Move(startingSquare, tmp7);
+      if(Checkifattacked(validM2)){//checks if the validmove can be attacked by any other moves that the player could make
       if(!piecePresent(((tmp7.getXC()*75)+20), (((tmp7.getYC()*75)+20)))){
-        if(Checkifattacked(validM2)){//checks if the validmove can be attacked by any other moves that the player could make
           moves.push(validM2);
         }
       }
       else{
+        if(Checkifattacked(validM2)){//checks if the validmove can be attacked by any other moves that the player could make
         if(checkWhiteOponent(((tmp7.getXC()*75)+20), (((tmp7.getYC()*75)+20)))){
-          if(Checkifattacked(validM2)){//checks if the validmove can be attacked by any other moves that the player could make
             moves.push(validM2);
           }
         }
@@ -541,14 +565,14 @@ private Stack getKingSquares(int x, int y, String piece){
   if(!(tmpy2 < 0)){
     if(checkSurroundingSquares(tmp8)){
       validM3 = new Move(startingSquare, tmp8);
+      if(Checkifattacked(validM3)){//checks if the validmove can be attacked by any other moves that the player could make
       if(!piecePresent(((tmp8.getXC()*75)+20), (((tmp8.getYC()*75)+20)))){
-        if(Checkifattacked(validM3)){//checks if the validmove can be attacked by any other moves that the player could make
           moves.push(validM3);
         }
       }
       else{
+        if(Checkifattacked(validM3)){//checks if the validmove can be attacked by any other moves that the player could make
         if(checkWhiteOponent(((tmp8.getXC()*75)+20), (((tmp8.getYC()*75)+20)))){
-          if(Checkifattacked(validM3)){//checks if the validmove can be attacked by any other moves that the player could make
             moves.push(validM3);
           }
         }
@@ -1092,19 +1116,19 @@ private void printStack(Stack input){
           We need to identify all the possible moves that can be made by the AI Opponent
       */
       if(tmpString.contains("Knight")){
-       //tmpMoves = getKnightMoves(s.getXC(), s.getYC(), s.getName());
+       tmpMoves = getKnightMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Bishop")){
-       //tmpMoves = getBishopMoves(s.getXC(), s.getYC(), s.getName());
+       tmpMoves = getBishopMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Pawn")){
-       //tmpMoves = getWhitePawnSquares(s.getXC(), s.getYC(), s.getName());
+       tmpMoves = getWhitePawnSquares(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Rook")){
-       //tmpMoves = getRookMoves(s.getXC(), s.getYC(), s.getName());
+       tmpMoves = getRookMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Queen")){
-       //tmpMoves = getQueenMoves(s.getXC(), s.getYC(), s.getName());
+       tmpMoves = getQueenMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("King")){
        tmpMoves = getKingSquares(s.getXC(), s.getYC(), s.getName());
