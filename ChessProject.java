@@ -326,13 +326,11 @@ while(!bstack.empty()){//Getting all the moves by the player
     Square isking = bmove.getLanding();
     blackMoves.push(bmove);
   }
-  while(!blackMoves.empty()){
-    //add code that checks if any of the landing square has king on its end and store in a stack
-  }
-  // temporary = (Stack)blackMoves.clone();
-  //   bgetLandingSquares(temporary);
-  //   printStack(temporary);
 
+  temporary = (Stack)blackMoves.clone();
+    bgetLandingSquares(temporary);
+    printStack(temporary);
+  attack=true;
 
 }
 return attack;
