@@ -1912,64 +1912,47 @@ private void printStack(Stack input){
       }
         else if(pieceName.equals("WhitePawn")){
           if((!(landingX < 0) || !(landingX > 7))||(!(landingY < 0)||!(landingY > 7))){
-			       if(startY == 1){
-               if(((xMovement == 0))&&((yMovement==1)||((yMovement)==2))){
-                 if(yMovement==2){
-                   if((!piecePresent(e.getX(), (e.getY())))&&(!piecePresent(e.getX(), (e.getY()-75)))){
-                     validMove = true;
-                   }
-                 }
-                 else{
-                   if((!piecePresent(e.getX(), (e.getY())))){
-                     validMove = true;
-                   }
-                 }
-               }
-               else if((piecePresent(e.getX(), e.getY()))&&(xMovement == yMovement)&&(xMovement == 1)&&(startY < landingY)){
-                 /*
-                    This is the condition were we are checking for a move to take a piece when the white pawn is making its
-                    first move. We check the following:
-                      - that there is a piece present,
-                      - we are moving in a diagonal,
-                      - the movement is only one square,
-                      - we are moving down the board
-                 */
-                 if(checkWhiteOponent(e.getX(), e.getY())){
-                   validMove = true;
-                   if(startY == 6){
-                     success = true;
-                   }
-                   if(getPieceName(e.getX(), e.getY()).contains("King")){
-                     winner = "White Wins!";
-                   }
-                 }
-               }
-             } // End of the movements for when the pawn is making its first move.
-             else{
-               if((startX-1 >= 0)||(startX +1 <=7)){
-                 if((piecePresent(e.getX(), e.getY()))&&(xMovement == yMovement)&&(xMovement == 1)){
-                   if(checkWhiteOponent(e.getX(), e.getY())){
-                     validMove = true;
-                     if(startY == 6){
-                       success = true;
-                     }
-                     if(getPieceName(e.getX(), e.getY()).contains("King")){
-                       winner = "White Wins!";
-                     }
-                   }
-                 }// checking the case for when there is a piecePresent
-                 else{
-                   if(!piecePresent(e.getX(), (e.getY()))){
-                     if(((xMovement == 0))&&((e.getY()/75)-startY)==1){
-                       if(startY == 6){
-                         success = true;
-                       }
-                       validMove = true;
-                     }
-                   }
-                 }
-               }
+            if(startY == 1){//This is where the pawn is making its first move --- Video Tutorial
+              if(((yMovement ==1 ) || (yMovement ==2 ))&& (startY < landingY) && (xMovement ==0)){
+                if(yMovement == 2){
+                  if((!piecePresent(e.getX(),e.getY()) && (!piecePresent(e.getX(),e.getY()-75)))){
+                    validMove = true;
+                  }
+                }
+                else{
+                  if(!piecePresent(e.getX(),e.getY())){
+                    validMove = true;
+                  }
+                }
+              }
+              else if((yMovement ==1 ) && (startY < landingY) && (xMovement ==1)){
+                if(piecePresent(e.getX(), e.getY())){
+                  if(checkWhiteOponent(e.getX(), e.getY())){
+                    validMove = true;
+                  }
+                }
+              }
              }
+            else{//This is where the pawn is making its subsequent moves
+              if(((yMovement ==1 ))&& (startY < landingY) && (xMovement ==0)){
+                if(!piecePresent(e.getX(),e.getY())){
+                  validMove = true;
+                  if(landingY == 7){
+                    success = true;
+                  }
+                }
+              }
+              else if((yMovement ==1 ) && (startY < landingY) && (xMovement ==1)){
+                if(piecePresent(e.getX(), e.getY())){
+                  if(checkWhiteOponent(e.getX(), e.getY())){
+                    validMove = true;
+                      if(landingY == 7){
+                        success = true;
+                      }
+                  }
+                }
+              }
+            }
            }
           }
     } //end of possible.
@@ -1997,32 +1980,34 @@ private void printStack(Stack input){
 
       if(progression){
         int location = 0 + (e.getX()/75);
-				if (c instanceof JLabel){
-	        Container parent = c.getParent();
+        if(c instanceof JLabel){
+          Container parent = c.getParent();
           parent.remove(0);
-					pieces = new JLabel( new ImageIcon("BlackQueen.png") );
+          pieces = new JLabel( new ImageIcon("BlackQueen.png") );
 					parent = (JPanel)chessBoard.getComponent(location);
-			    parent.add(pieces);
-				}
-        if(winner !=null){
-          JOptionPane.showMessageDialog(null, winner);
-          System.exit(0);
+			    	parent.add(pieces);
+        }
+        else{
+          Container parent = (Container)c;
+	            	pieces = new JLabel( new ImageIcon("BlackQueen.png") );
+					parent = (JPanel)chessBoard.getComponent(location);
+			    	parent.add(pieces);
         }
       }
 			else if(success){
 				int location = 56 + (e.getX()/75);
 				if (c instanceof JLabel){
-          Container parent = c.getParent();
-          parent.remove(0);
+	            	Container parent = c.getParent();
+	            	parent.remove(0);
 					pieces = new JLabel( new ImageIcon("WhiteQueen.png") );
 					parent = (JPanel)chessBoard.getComponent(location);
-          parent.add(pieces);
+			    	parent.add(pieces);
 				}
 				else{
 					Container parent = (Container)c;
-          pieces = new JLabel( new ImageIcon("WhiteQueen.png") );
+	            	pieces = new JLabel( new ImageIcon("WhiteQueen.png") );
 					parent = (JPanel)chessBoard.getComponent(location);
-          parent.add(pieces);
+			    	parent.add(pieces);
 				}
 			}
 			else{

@@ -52,8 +52,8 @@ public class AIAgent{
             else if(blackmove.getLanding().getName().equals("BlackRook")){
               initialMoveStrength = 5;
             }
-            else if((blackmove.getLanding().getName().equals("BlackBishop")
-                ||(blackmove.getLanding().getName().equals("BlackKnight")))){
+            else if((blackmove.getLanding().getName().equals("BlackBishop"))||(blackmove.getLanding().getName().equals("BlackKnight")))
+            {
               initialMoveStrength = 3;
             }
             else if(blackmove.getLanding().getName().equals("BlackPawn")){
@@ -64,17 +64,17 @@ public class AIAgent{
             }
 
         }
-
         if(initialMoveStrength > finalMoveStrength){
           finalMoveStrength = initialMoveStrength;
           move2play = selectedMove;
         }
       }
+      
       if(finalMoveStrength > 0){
         return move2play;
       }
       else{
-        return randomMove(whiteMoves);
+       return selectedMove;
       }
      }
     return move2play;
