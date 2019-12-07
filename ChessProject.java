@@ -1205,7 +1205,7 @@ private void printStack(Stack input){
       }
        System.out.println("=============================================================");
        Border redBorder = BorderFactory.createLineBorder(Color.RED, 3);
-       Move selectedMove = agent.randomMove(testing);
+       Move selectedMove = agent.nextBestMove(testing,blackMoves);
        Square startingPoint = (Square)selectedMove.getStart();
        Square landingPoint = (Square)selectedMove.getLanding();
        int startX1 = (startingPoint.getXC()*75)+20;
