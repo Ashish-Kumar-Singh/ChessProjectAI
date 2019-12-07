@@ -337,22 +337,20 @@ while(!bstack.empty()){//Getting all the moves by the player
     bmove = (Move)tmpMoves.pop();
     blackMoves.push(bmove);
   }
- 
-
-  while(!blackMoves.empty()){
-    Move newmove = (Move)blackMoves.pop();
-    Square isking = newmove.getLanding();
-    int x = isking.getXC();
-    int y = isking.getYC();
-    if(((x == landx) && (y == landy))|| ((x==startx) && (y==starty))){
-      attack=false;
-    }
-    else{
-      attack=true;
-    }
-   }
-
-}
+ }
+ while(!blackMoves.empty()){
+  Move newmove = (Move)blackMoves.pop();
+  Square isking = newmove.getLanding();
+  int x = isking.getXC();
+  int y = isking.getYC();
+  
+  if(((landx == x) && (landy == y))|| ((startx == x) && (starty==y))){
+    attack=false;
+  }
+  else{
+    attack=true;
+  }
+ }
 return attack;
 }
 
@@ -1195,7 +1193,7 @@ private void printStack(Stack input){
         Move tmpMove = (Move)completeMoves.pop();
         Square s1 = (Square)tmpMove.getStart();
         Square s2 = (Square)tmpMove.getLanding();
-        System.out.println("The "+s1.getName()+" can move from ("+s1.getXC()+", "+s1.getYC()+") to the following square: ("+s2.getXC()+", "+s2.getYC()+")");
+        //System.out.println("The "+s1.getName()+" can move from ("+s1.getXC()+", "+s1.getYC()+") to the following square: ("+s2.getXC()+", "+s2.getYC()+")");
         testing.push(tmpMove);
       }
        System.out.println("=============================================================");
