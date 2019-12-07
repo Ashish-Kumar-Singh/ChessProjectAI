@@ -32,34 +32,50 @@ public class AIAgent{
     //Rook - 5 points
     //Queen - 9 points
     //King = 1000 point(Instant win)
-    Stack whiteMoves = whitemoves;
+    Stack whiteMovestack = (Stack)whitemoves.clone();
     Stack blackMoves = blackmoves;
-    int initialMoveStrength = 0;
-    int finalMoveStrength= 0;
-    Move blackmove;//stores a random player move from the stack
+    double initialMoveStrength = 0;
+    double finalMoveStrength= 0;
+    Move selectedMove;
+    Move whitemove;
+    Sqaure blackmove;//stores a random player move from the stack
     Move move2play =null;//the final move to play
 
-    while(!whiteMoves.empty()){
-      Move selectedMove = (Move)whiteMoves.pop();//Selects a random move from the stack
-      move2play = selectedMove;
+    while(!whiteMovestack.empty()){
+      whitemove = (Move)whiteMove.pop();//Selects a random move from the stack
+      selectedMove = whitemove;
+    //   if ((selectedMove.getStart().getYC() < selectedMove.getLanding().getYC())
+    //   && (selectedMove.getLanding().getXC() == 3) && (selectedMove.getLanding().getYC() == 3)
+    //   || (selectedMove.getLanding().getXC() == 4) && (selectedMove.getLanding().getYC() == 3)
+    //   || (selectedMove.getLanding().getXC() == 3) && (selectedMove.getLanding().getYC() == 4)
+    //   || (selectedMove.getLanding().getXC() == 4) && (selectedMove.getLanding().getYC() == 4)) {
+
+    //     initialMoveStrength = 1;
+
+    //     if(initialMoveStrength > finalMoveStrength){
+    //       finalMoveStrength = initialMoveStrength;
+    //       move2play = selectedMove;
+    //     }
+    // }
       while(!blackMoves.empty()){//selected move loops through all the black moves and checks which coinciding landing sqare has most points
-        blackmove = (Move)blackMoves.pop();
-        if((selectedMove.getLanding().getXC() == blackmove.getLanding().getXC())//if the landing of the selected move is the same as the start of opponent
-        && (selectedMove.getLanding().getYC()== blackmove.getLanding().getYC())){//If the selected moves triestaking a piece
-            if(blackmove.getLanding().getName().equals("BlackQueen")){
-              initialMoveStrength = 9;
+        initialMoveStrength=0;
+        blackmove = (Square)blackMoves.pop();
+        if((selectedMove.getLanding().getXC() == blackmove.getXC())//if the landing of the selected move is the same as the start of opponent
+        && (selectedMove.getLanding().getYC()== blackmove.getYC())){//If the selected moves triestaking a piece
+            if(blackmove.getName().equals("BlackQueen")){
+              initialMoveStrength = 10;
             }
-            else if(blackmove.getLanding().getName().equals("BlackRook")){
-              initialMoveStrength = 5;
+            else if(blackmove.getName().equals("BlackRook")){
+              initialMoveStrength = 6;
             }
-            else if((blackmove.getLanding().getName().equals("BlackBishop"))||(blackmove.getLanding().getName().equals("BlackKnight")))
+            else if((blackmove.getName().equals("BlackBishop"))||(blackmove.getLanding().getName().equals("BlackKnight")))
             {
-              initialMoveStrength = 3;
+              initialMoveStrength = 4;
             }
-            else if(blackmove.getLanding().getName().equals("BlackPawn")){
-              initialMoveStrength = 1;
+            else if(blackmove.getName().equals("BlackPawn")){
+              initialMoveStrength = 2;
             }
-            else if(blackmove.getLanding().getName().equals("BlackKing")){
+            else if(blackmove.getName().equals("BlackKing")){
               initialMoveStrength = 1000;
             }
 
@@ -67,18 +83,21 @@ public class AIAgent{
         if(initialMoveStrength > finalMoveStrength){
           finalMoveStrength = initialMoveStrength;
           move2play = selectedMove;
+          System.out.println("||||||||||||||||||||||||||");
         }
-        blackMoves = blackmoves;
-      }
-      
-      if(finalMoveStrength > 0){
-        return move2play;
-      }
-      else{
-       return selectedMove;
-      }
+      }     
      }
-    return move2play;
+     if(finalMoveStrength > 0){
+      System.out.println(finalMoveStrength);
+      System.out.println("--+++++++++++++++++++++++++++++++++++--");
+      return move2play;
+    }
+    else{
+      System.out.println("random shit");
+      return randomMove(whiteMovestack);
+    }
+     
+    
   }
 
   public Move twoLevelsDeep(Stack possibilities){
