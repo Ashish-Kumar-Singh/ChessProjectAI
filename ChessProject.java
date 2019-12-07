@@ -71,11 +71,11 @@ public class ChessProject extends JFrame implements MouseListener, MouseMotionLi
 
         // Setting up the Initial Chess board.
         //Adding pieces on the board
-  	for(int i=8;i < 16; i++){
+  	/*for(int i=8;i < 16; i++){
        		pieces = new JLabel( new ImageIcon("WhitePawn.png") );
 			panels = (JPanel)chessBoard.getComponent(i);
 	        panels.add(pieces);
-		}
+		}*/
 		pieces = new JLabel( new ImageIcon("WhiteRook.png") );
 		panels = (JPanel)chessBoard.getComponent(0);
 	    panels.add(pieces);
@@ -337,12 +337,7 @@ while(!bstack.empty()){//Getting all the moves by the player
     bmove = (Move)tmpMoves.pop();
     blackMoves.push(bmove);
   }
-
-
-  temporary = (Stack)blackMoves.clone();
-    bgetLandingSquares(temporary);
-    printStack(temporary);
-  
+ 
 
   while(!blackMoves.empty()){
     Move newmove = (Move)blackMoves.pop();
@@ -1116,22 +1111,22 @@ private void printStack(Stack input){
           We need to identify all the possible moves that can be made by the AI Opponent
       */
       if(tmpString.contains("Knight")){
-       tmpMoves = getKnightMoves(s.getXC(), s.getYC(), s.getName());
+       //tmpMoves = getKnightMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Bishop")){
-       tmpMoves = getBishopMoves(s.getXC(), s.getYC(), s.getName());
+       //tmpMoves = getBishopMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Pawn")){
-       tmpMoves = getWhitePawnSquares(s.getXC(), s.getYC(), s.getName());
+       //tmpMoves = getWhitePawnSquares(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Rook")){
        tmpMoves = getRookMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("Queen")){
-       tmpMoves = getQueenMoves(s.getXC(), s.getYC(), s.getName());
+       //tmpMoves = getQueenMoves(s.getXC(), s.getYC(), s.getName());
       }
       else if(tmpString.contains("King")){
-       tmpMoves = getKingSquares(s.getXC(), s.getYC(), s.getName());
+       //tmpMoves = getKingSquares(s.getXC(), s.getYC(), s.getName());
       }
 
       while(!tmpMoves.empty()){

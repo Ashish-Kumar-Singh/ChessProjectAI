@@ -68,6 +68,7 @@ public class AIAgent{
           finalMoveStrength = initialMoveStrength;
           move2play = selectedMove;
         }
+        blackMoves = blackmoves;
       }
       
       if(finalMoveStrength > 0){
