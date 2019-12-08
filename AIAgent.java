@@ -49,6 +49,9 @@ public class AIAgent{
       
               initialMoveStrength = 0.5;
           }
+          else{
+            initialMoveStrength=0;
+          }
       while(!blackMoves.empty()){//selected move loops through all the black moves and checks which coinciding landing sqare has most points
         blackmove = (Square)blackMoves.pop();
         if((selectedMove.getLanding().getXC() == blackmove.getXC())//if the landing of the selected move is the same as the start of opponent
@@ -101,11 +104,12 @@ public class AIAgent{
     Stack blackMoves = blackmoves;
     double initialMoveStrength = 0;
     double finalMoveStrength= 0;
+    Stack greeedymoves= new Stack();//store ll bestmoves
     Square blackmove;//stores a random player move from the stack
     Move move2play =null;//the final move to play
 
-    for(int i=0;i<whiteMovestack.size();i++){
-      Move selectedMove = (Move)whitemoves.pop();//Selects a random move from the stack
+    while(!whitemoves.empty()){
+      Move selectedMove = (Move)whiteMovestack.pop();//Selects a random move from the stack
       if ((selectedMove.getStart().getYC() < selectedMove.getLanding().getYC())
             && (selectedMove.getLanding().getXC() == 3) && (selectedMove.getLanding().getYC() == 3)
             || (selectedMove.getLanding().getXC() == 4) && (selectedMove.getLanding().getYC() == 3)
@@ -113,28 +117,34 @@ public class AIAgent{
             || (selectedMove.getLanding().getXC() == 4) && (selectedMove.getLanding().getYC() == 4)) {
       
               initialMoveStrength = 0.5;
-          }
+             
+            }
+            else{
+              initialMoveStrength=0;
+            }
+        
       while(!blackMoves.empty()){//selected move loops through all the black moves and checks which coinciding landing sqare has most points
+        initialMoveStrength =0;
         blackmove = (Square)blackMoves.pop();
         if((selectedMove.getLanding().getXC() == blackmove.getXC())//if the landing of the selected move is the same as the start of opponent
         && (selectedMove.getLanding().getYC()== blackmove.getYC())){//If the selected moves triestaking a piece
           System.out.println(blackmove.getName());
           System.out.println(selectedMove.getLanding().getName());    
-          if(blackmove.getName().equals("BlackQueen")){
-              initialMoveStrength = 10;
+          if(blackmove.getName().equals("BlackPawn")){
+              initialMoveStrength = 2;
             }
-            else if(blackmove.getName().equals("BlackRook")){
-              initialMoveStrength = 6;
+            else if (blackmove.getName().equals("BlackKnight")){
+              initialMoveStrength = 4;
             }
             else if(blackmove.getName().equals("BlackBishop"))
             {
               initialMoveStrength = 4;
             }
-            else if (blackmove.getName().equals("BlackKnight")){
-              initialMoveStrength = 4;
+            else if(blackmove.getName().equals("BlackRook")){
+              initialMoveStrength = 6;
             }
-            else if(blackmove.getName().equals("BlackPawn")){
-              initialMoveStrength = 2;
+            else if (blackmove.getName().equals("BlackQueen")){
+              initialMoveStrength = 10;
             }
             else if(blackmove.getName().equals("BlackKing")){
               initialMoveStrength = 1000;
@@ -144,19 +154,19 @@ public class AIAgent{
         if(initialMoveStrength > finalMoveStrength){
           finalMoveStrength = initialMoveStrength;
           move2play = selectedMove;
+          bestmoves bestmove = new bestmoves(move2play, finalMoveStrength);
+          greeedymoves.push(bestmove);
         }
-      }     
-    
-
-    if(finalMoveStrength > 0){
-      System.out.println(finalMoveStrength);
-      return move2play;
-    }else{
-      return selectedMove;
-    }
+       
+      }  
+      blackMoves = blackmoves;   
+  }    
+  if(finalMoveStrength > 0){
+    System.out.println(finalMoveStrength);
+    return move2play;
+  }else{
+    return randomMove(whiteMovestack);
   }
-      return move2play;
-    
-    
   }
 }
+

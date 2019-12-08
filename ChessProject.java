@@ -159,10 +159,13 @@ if(!(y>7) && !(y<0) && !(x>7) && !(x<0)){//so the piece does not fall off the bo
        moves.push(validM);
      }
   }
-  if(!(tmpy2 > 7)  && (y==1)){//Move 2 step forward 
+  if( (y==1)){//Move 2 step forward 
     validM2 = new Move(startingSquare, tmp1);
-    if(!piecePresent(((tmp1.getXC()*75)+20), (((tmp1.getYC()*75)+20)))){
-      moves.push(validM2);
+    if(piecePresent(((tmp.getXC()*75)+20), (((tmp.getYC()*75)+20)))){ }
+    else{
+      if(!piecePresent(((tmp1.getXC()*75)+20), (((tmp1.getYC()*75)+20)))){
+        moves.push(validM2);
+    }
     }
 }
 
@@ -219,10 +222,13 @@ if(!(y>7) && !(y<0) && !(x>7) && !(x<0)){
        moves.push(validM);
      }
   }
-  if(!(tmpy2 > 7)  && (y==6)){//Move 2 step forward 
+  if((y==6)){//Move 2 step forward 
     validM2 = new Move(startingSquare, tmp1);
-    if(!piecePresent(((tmp1.getXC()*75)+20), (((tmp1.getYC()*75)+20)))){
-      moves.push(validM2);
+    if(piecePresent(((tmp.getXC()*75)+20), (((tmp.getYC()*75)+20)))){ }
+    else{
+      if(!piecePresent(((tmp1.getXC()*75)+20), (((tmp1.getYC()*75)+20)))){
+        moves.push(validM2);
+    }
     }
 }
 
@@ -1295,7 +1301,11 @@ private void printStack(Stack input){
 	/*
 		This method is called when we press the Mouse. So we need to find out what piece we have
 		selected. We may also not have selected a piece!
-	*/
+  */
+  public int game(int n){//to return the opitons
+    int option =n;
+    return option;
+  }
     public void mousePressed(MouseEvent e){
         chessPiece = null;
         String name = getPieceName(e.getX(), e.getY());
@@ -2034,7 +2044,7 @@ private void printStack(Stack input){
     public void mouseExited(MouseEvent e) {
 
     }
-
+  
     public void startGame(){
       System.out.println("Let the game begin");
     }
